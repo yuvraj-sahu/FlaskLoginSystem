@@ -9,16 +9,19 @@ table_name = 'users'
 # with the exception of the connect() function, which establishes a connection.
 
 def connect():
+    global connection, cursor
     connection = sqlite3.connect('users_database.db')
     cursor = connection.cursor()
 
 def disconnect():
+    global connection, cursor
     connection.close()
     connection, cursor = None, None
 
 def create_table():
+    global connection, cursor
     cursor.execute(f"""create table if not exists {table_name}(
-        "username" Text
+        "username" Text,
         "password" Text
     )""")
     connection.commit()
@@ -37,6 +40,7 @@ class StatusConstants:
     user_not_found = Status(False, "The username and password do not match.")
 
 def check_user(username, password):
+    global connection, cursor
     connect()
     create_table()
 
@@ -52,6 +56,7 @@ def check_user(username, password):
     return StatusConstants.user_not_found
 
 def add_user(username, password):
+    global connection, cursor
     connect()
     create_table()
 
@@ -65,7 +70,7 @@ def add_user(username, password):
         return StatusConstants.username_taken
 
     cursor.execute(
-    f"insert into {table_name} values(?, ?)",
+    f"insert into {table_name}(username, password) values(?, ?)",
     [username, password]
     ).fetchall()
 
