@@ -18,6 +18,9 @@ def disconnect():
     connection.close()
     connection, cursor = None, None
 
+# Once the table has been created once, this function does not need to be called
+# again in check_user and add_user (so you can remove it from these functions
+# after this function has been called once).
 def create_table():
     global connection, cursor
     cursor.execute(f"""create table if not exists {table_name}(
