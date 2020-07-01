@@ -1,5 +1,5 @@
 from flask import Flask, render_template, request, redirect, url_for, session
-from users import check_user, add_user
+from users import check_user, add_user, delete_user
 
 app = Flask(__name__)
 
@@ -64,3 +64,21 @@ def logout():
     session['logged-in'] = False
     session['username'] = None
     return redirect(url_for('home'))
+
+@app.route('/delete', methods=['GET', 'POST'])
+def delete():
+    if not session.get('logged-in'):
+        return redirect(url_for('login'))
+
+    if request.method == 'GET':
+        return render_template('confirm-delete.html')
+    else:
+        username = session['username']
+        password = request.form['password']
+        if check_user(username, password):
+            delete_user(username, password)
+            session['logged-in'] = False
+            session['username'] = None
+            return render_template('home.html')
+        else:
+            return render_template('confirm-delete.html', error="Incorrect password")

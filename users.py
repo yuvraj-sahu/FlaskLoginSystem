@@ -75,9 +75,21 @@ def add_user(username, password):
     cursor.execute(
     f"insert into {table_name}(username, password) values(?, ?)",
     [username, password]
-    ).fetchall()
+    )
 
     connection.commit()
     disconnect()
 
     return StatusConstants.successful
+
+def delete_user(username, password):
+    global connection, cursor
+    connect()
+
+    cursor.execute(
+    f"delete from {table_name} where username=? and password=?",
+    [username, password]
+    )
+
+    connection.commit()
+    disconnect()
