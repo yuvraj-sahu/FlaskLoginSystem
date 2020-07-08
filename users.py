@@ -1,4 +1,5 @@
 import sqlite3
+from passlib.hash import pbkdf2_sha256
 
 connection, cursor = None, None
 table_name = 'users'
@@ -48,14 +49,19 @@ def check_user(username, password):
     create_table()
 
     result = cursor.execute(
-    f"select * from {table_name} where username=? and password=?",
-    [username, password]
+    f"select * from {table_name} where username=?",
+    [username]
     ).fetchall()
 
     disconnect()
 
-    if result:
+    if not result:
+        return StatusConstants.user_not_found
+
+    db_password = result[0][1]
+    if pbkdf2_sha256.verify(password, db_password):
         return StatusConstants.successful
+
     return StatusConstants.user_not_found
 
 def add_user(username, password):
@@ -72,9 +78,10 @@ def add_user(username, password):
         disconnect()
         return StatusConstants.username_taken
 
+    hashed_password = pbkdf2_sha256.hash(password)
     cursor.execute(
     f"insert into {table_name}(username, password) values(?, ?)",
-    [username, password]
+    [username, pbkdf2_sha256.hash(password)]
     )
 
     connection.commit()
@@ -82,13 +89,15 @@ def add_user(username, password):
 
     return StatusConstants.successful
 
-def delete_user(username, password):
+# This function just deletes the user based on their username (without checking
+# for the password as well)
+def delete_user(username):
     global connection, cursor
     connect()
 
     cursor.execute(
-    f"delete from {table_name} where username=? and password=?",
-    [username, password]
+    f"delete from {table_name} where username=?",
+    [username]
     )
 
     connection.commit()

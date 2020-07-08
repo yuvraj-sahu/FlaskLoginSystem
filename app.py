@@ -76,7 +76,7 @@ def delete():
         username = session['username']
         password = request.form['password']
         if check_user(username, password):
-            delete_user(username, password)
+            delete_user(username)
             session['logged-in'] = False
             session['username'] = None
             return render_template('home.html')
