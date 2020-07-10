@@ -79,6 +79,6 @@ def delete():
             delete_user(username)
             session['logged-in'] = False
             session['username'] = None
-            return render_template('home.html')
+            return redirect(url_for('home'))
         else:
             return render_template('confirm-delete.html', error="Incorrect password")
