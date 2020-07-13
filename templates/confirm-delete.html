@@ -1,17 +1,14 @@
-<!DOCTYPE html>
-<html lang="en" dir="ltr">
-    <head>
-        <meta charset="utf-8">
-        <title>Confirm Delete</title>
-    </head>
-    <body>
-        <p>Are you sure that you want to delete this account?</p>
-        <p>Type in your password to confirm this action. This cannot be undone!</p>
-        <p>{{error}}</p>
-        <form method='POST'>
-            <input type='password' name='password' placeholder='Enter your password' required>
-            <input type='submit' value='Delete Account'>
-        </form>
-        <a href="{{url_for('dashboard')}}">Return to dashboard</a>
-    </body>
-</html>
+{% extends "layout.html" %}
+
+{% block title %}Confirm Delete{% endblock %}
+
+{% block content %}
+<p>Are you sure that you want to delete this account?</p>
+<p>Type in your password to confirm this action. This cannot be undone!</p>
+<p>{{error}}</p>
+<form method='POST'>
+    <input type='password' name='password' placeholder='Enter your password' required>
+    <input type='submit' value='Delete Account'>
+</form>
+<a href="{{url_for('dashboard')}}">Return to dashboard</a>
+{% endblock %}
